@@ -86,8 +86,8 @@
     <LibraryPath>$(SolutionDir)wxWidgets\lib\vc_x64_lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>C:\Users\Jakub\Downloads\wxWidgets-3.2.2.1\include\msvc;C:\Users\Jakub\Downloads\wxWidgets-3.2.2.1\include\;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\Jakub\Downloads\wxWidgets-3.2.2.1\lib\vc_x64_lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)wxWidgets\include\msvc;$(SolutionDir)wxWidgets\include\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)wxWidgets\lib\vc_x64_lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -132,7 +132,7 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>C:\Users\Jakub\Desktop\WorkingDir\FreeImage.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
