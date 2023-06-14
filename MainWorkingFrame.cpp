@@ -67,10 +67,14 @@ void MainWorkingFrame::BtnImportImageClick( wxCommandEvent& event )
 		wxImage::AddHandler(new wxJPEGHandler);
 		wxImage::AddHandler(new wxPNGHandler);
 
+		// oryginalne zdjecie, nie podlega zadnej edycji, Img_Org podlega zmianie tylko gdy zaladujemy nowe zdjecie
 		Img_Org = wxImage(WxOpenFileDialog.GetPath(), wxBITMAP_TYPE_JPEG);
 
 		if (Img_Org.IsOk()) {
+			// wszystkie operacje zwiazane z graficznymi przeksztalceniami robione na Img_Cpy
 			Img_Cpy = Img_Org.Copy();
+
+			// odblokowanie sliderow i przyciskow
 			m_slider_red->Enable(true);
 			m_slider_green->Enable(true);
 			m_slider_blue->Enable(true);
@@ -136,16 +140,31 @@ void MainWorkingFrame::BtnSaveImageClick( wxCommandEvent& event )
 }
 
 void MainWorkingFrame::Repaint() {
-	int w, h;
-	panel_main->GetSize(&w, &h);
+	// podglad na zywo rysowany na podstawie Img_Cpy
+	wxImage Img_Preview = Img_Cpy.Copy();
+
+	// wysokosc i szerokosc obrazka
+	int w = Img_Org.GetWidth();
+	int h = Img_Org.GetHeight();
+	
+	// przesuniecie obrazu wzgledem lewego gornego rogu w przypadku gdy propocje sie nie zgadzaja
+	int shiftX = 0, shiftY = 0;
 
 	wxClientDC dc1(panel_main);
 	wxBufferedDC dc(&dc1);
 
-	dc.SetBackground(wxSystemSettings::GetColour(wxSYS_COLOUR_BACKGROUND));
 	dc.Clear();
 
-	wxImage Img_Preview = Img_Cpy.Copy().Rescale(w, h);
+	// skalowanie obrazka z zachowaniem proporcji - dluzszy bok rowny 500px
+	if (w>h) {
+		Img_Preview = Img_Preview.Rescale(500, (double)h / w * 500);
+		shiftY = (double)(500 - Img_Preview.GetHeight()) / 2;
+	}
+	else {
+		Img_Preview = Img_Preview.Rescale((double)w/h*500, 500);
+		shiftX = (double)(500 - Img_Preview.GetWidth()) / 2;
+	}
+
 	wxBitmap bitmapa(Img_Preview);
-	dc.DrawBitmap(bitmapa, 0, 0);
+	dc.DrawBitmap(bitmapa, shiftX, shiftY);
 }
