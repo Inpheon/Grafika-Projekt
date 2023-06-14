@@ -61,6 +61,28 @@ void MainWorkingFrame::FrameOnUpdateUI( wxUpdateUIEvent& event )
 void MainWorkingFrame::BtnImportImageClick( wxCommandEvent& event )
 {
 // TODO: Implement BtnImportImageClick
+	wxFileDialog WxOpenFileDialog(this, wxT("Choose a file"), wxT(""), wxT(""), wxT("JPG and PNG files (*.jpg;*.png)|*.jpg;*.png"), wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+
+	if (WxOpenFileDialog.ShowModal() == wxID_OK){
+		wxImage::AddHandler(new wxJPEGHandler);
+		wxImage::AddHandler(new wxPNGHandler);
+
+		Img_Org = wxImage(WxOpenFileDialog.GetPath(), wxBITMAP_TYPE_JPEG);
+
+		if (Img_Org.IsOk()) {
+			Img_Cpy = Img_Org.Copy();
+			m_slider_red->Enable(true);
+			m_slider_green->Enable(true);
+			m_slider_blue->Enable(true);
+			m_slider_mixing_level->Enable(true);
+			m_button_bichromy->Enable(true);
+			m_button_load_parameters->Enable(true);
+			m_button_save_image->Enable(true);
+			m_button_save_parameters->Enable(true);
+
+			Repaint();
+		}
+	}
 }
 
 void MainWorkingFrame::OnScrollRed( wxScrollEvent& event )
@@ -111,4 +133,19 @@ void MainWorkingFrame::ColorChanged( wxColourPickerEvent& event )
 void MainWorkingFrame::BtnSaveImageClick( wxCommandEvent& event )
 {
 // TODO: Implement BtnSaveImageClick
+}
+
+void MainWorkingFrame::Repaint() {
+	int w, h;
+	panel_main->GetSize(&w, &h);
+
+	wxClientDC dc1(panel_main);
+	wxBufferedDC dc(&dc1);
+
+	dc.SetBackground(wxSystemSettings::GetColour(wxSYS_COLOUR_BACKGROUND));
+	dc.Clear();
+
+	wxImage Img_Preview = Img_Cpy.Copy().Rescale(w, h);
+	wxBitmap bitmapa(Img_Preview);
+	dc.DrawBitmap(bitmapa, 0, 0);
 }
