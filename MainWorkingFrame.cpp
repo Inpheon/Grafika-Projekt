@@ -84,6 +84,14 @@ void MainWorkingFrame::BtnImportImageClick( wxCommandEvent& event )
 			m_button_save_image->Enable(true);
 			m_button_save_parameters->Enable(true);
 
+			// zresetowanie ustawien suwakow
+			m_slider_red->SetValue(0);
+			m_slider_green->SetValue(0);
+			m_slider_blue->SetValue(0);
+			m_staticText2->SetLabel("Red:");
+			m_staticText3->SetLabel("Green:");
+			m_staticText4->SetLabel("Blue:");
+
 			Repaint();
 		}
 	}
@@ -192,6 +200,7 @@ void MainWorkingFrame::MixChannels(int r, int g, int b) {
 	unsigned char* colors_cpy = Img_Cpy.GetData();
 	for (int i = 0; i < Img_Cpy.GetWidth() * Img_Cpy.GetHeight(); i++) {
 		
+		/////////// DO POPRAWY ///////////
 		// R channel
 		if (r >= -200 && r != 0) {
 			int NewRed = (int)colors_org[i * 3] * (double)r / 100;
