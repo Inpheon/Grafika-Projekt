@@ -38,7 +38,10 @@ class MainWorkingFrame : public MainFrameBase
 		/** Constructor */
 		MainWorkingFrame( wxWindow* parent );
 	//// end generated class members
-
+		void bichromyGradientChanged(wxColourPickerEvent& event) {
+			wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED, m_button_bichromy->GetId());    GetEventHandler()->ProcessEvent(evt); BtnBichromyClick(evt);
+		}
+		void btnRestoreImageClick(wxCommandEvent& event) { Img_Cpy = Img_Org; Repaint(); }
 		cimg_library::CImg<unsigned char> wxImageToCImg(const wxImage& image);
 		wxImage CImgTowxImage(const cimg_library::CImg<unsigned char>& image);
 	
