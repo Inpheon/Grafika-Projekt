@@ -85,13 +85,15 @@ void MainWorkingFrame::BtnImportImageClick( wxCommandEvent& event )
 			m_button_save_parameters->Enable(true);
 
 			// zresetowanie ustawien suwakow
-			m_slider_red->SetValue(0);
-			m_slider_green->SetValue(0);
-			m_slider_blue->SetValue(0);
-			m_staticText2->SetLabel("Red:");
-			m_staticText3->SetLabel("Green:");
-			m_staticText4->SetLabel("Blue:");
+			m_slider_red->SetValue(30);
+			m_slider_green->SetValue(59);
+			m_slider_blue->SetValue(11);
+			m_staticText2->SetLabel("Red: 30%");
+			m_staticText3->SetLabel("Green: 59%");
+			m_staticText4->SetLabel("Blue: 11%");
 
+			// zmieszanie kanalow i wyswietlenie podgladu
+			MixChannels(30, 59, 11);
 			Repaint();
 		}
 	}
@@ -101,32 +103,47 @@ void MainWorkingFrame::OnScrollRed( wxScrollEvent& event )
 {
 // TODO: Implement OnScrollRed
 	int red = m_slider_red->GetValue();
+	int green = m_slider_green->GetValue();
+	int blue = m_slider_blue->GetValue();
+
 	// tylko do podgladu
 	m_staticText2->SetLabel("Red: " + std::to_string(red) + "%");
 	//
-	MixChannels(red, -999, -999);
+
+	// mieszanie kanalow
+	MixChannels(red, green, blue);
 	Repaint();
 }
 
 void MainWorkingFrame::OnScrollGreen( wxScrollEvent& event )
 {
 // TODO: Implement OnScrollGreen
+	int red = m_slider_red->GetValue();
 	int green = m_slider_green->GetValue();
+	int blue = m_slider_blue->GetValue();
+	
 	// tylko do podgladu
 	m_staticText3->SetLabel("Green: " + std::to_string(green) + "%");
 	//
-	MixChannels(-999, green, -999);
+
+	// mieszanie kanalow
+	MixChannels(red, green, blue);
 	Repaint();
 }
 
 void MainWorkingFrame::OnScrollBlue( wxScrollEvent& event )
 {
 // TODO: Implement OnScrollBlue
+	int red = m_slider_red->GetValue();
+	int green = m_slider_green->GetValue();
 	int blue = m_slider_blue->GetValue();
+	
 	// tylko do podgladu
 	m_staticText4->SetLabel("Blue: " + std::to_string(blue) + "%");
 	//
-	MixChannels(- 999, -999, blue);
+
+	// mieszanie kanalow
+	MixChannels(red, green, blue);
 	Repaint();
 }
 
@@ -196,34 +213,25 @@ void MainWorkingFrame::Repaint() {
 }
 
 void MainWorkingFrame::MixChannels(int r, int g, int b) {
+	// tablice kolorow - kolejne trojki rgb
+	// 
+	// tablica kolorow oryginalnego zdjecia
 	unsigned char* colors_org = Img_Org.GetData();
+	// tablica kolorow kopii roboczej
 	unsigned char* colors_cpy = Img_Cpy.GetData();
+
 	for (int i = 0; i < Img_Cpy.GetWidth() * Img_Cpy.GetHeight(); i++) {
-		
-		/////////// DO POPRAWY ///////////
-		// R channel
-		if (r >= -200 && r != 0) {
-			int NewRed = (int)colors_org[i * 3] * (double)r / 100;
-			NewRed += (int)colors_org[i * 3];
-			colors_cpy[i * 3] = (NewRed < 0 ? 0 : NewRed);
-			colors_cpy[i * 3] = (NewRed > 255 ? 255 : NewRed);
+		// procentowa wartosc suwaka
+		double red = (double)r / 200;
+		double green = (double)g / 200;
+		double blue = (double)b / 200;
 
-		}
-		// G channel
-		if (g >= -200 && g != 0) {
-			int NewGreen = (int)colors_org[i * 3 + 1] * (double)g / 100;
-			NewGreen += (int)colors_org[i * 3 + 1];
-			colors_cpy[i * 3 + 1] = (NewGreen < 0 ? 0 : NewGreen);
-			colors_cpy[i * 3 + 1] = (NewGreen > 255 ? 255 : NewGreen);
+		// konwersja do skali szarosci - mieszanie wedlug ustawien uzytkownika
+		unsigned char brightness = std::clamp(int(red * colors_org[i * 3] + green * colors_org[i * 3 + 1] + blue *colors_org[i * 3 + 2]), 0, 255);
 
-		}
-		// B channel
-		if (b >= -200 && b != 0) {
-			int NewBlue = (int)colors_org[i * 3 + 2] * (double)b / 100;
-			NewBlue += (int)colors_org[i * 3 + 2];
-			colors_cpy[i * 3 + 2] = (NewBlue < 0 ? 0 : NewBlue);
-			colors_cpy[i * 3 + 2] = (NewBlue > 255 ? 255 : NewBlue);
-
-		}
+		// modyfikacja pikseli obrazu
+		colors_cpy[i * 3] = brightness;		// r
+		colors_cpy[i * 3 + 1] = brightness;	// g
+		colors_cpy[i * 3 + 2] = brightness;	// b
 	}
 }
