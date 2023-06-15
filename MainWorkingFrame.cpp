@@ -104,10 +104,40 @@ void MainWorkingFrame::OnScrollBlue( wxScrollEvent& event )
 // TODO: Implement OnScrollBlue
 }
 
-void MainWorkingFrame::BtnBichromyClick( wxCommandEvent& event )
+
+void MainWorkingFrame::BtnBichromyClick(wxCommandEvent& event)
 {
-// TODO: Implement BtnBichromyClick
+	// Odcienie dla jasnych i ciemnych partii
+	unsigned char dark_hue[3] = { 0, 0, 255 };  // ciemny odcie?
+	unsigned char light_hue[3] = { 255, 255, 0 };  // jasny odcie?
+
+	// Przej?cie przez ka?dy piksel obrazu
+	for (size_t x = 0; x < Img_Cpy.GetWidth(); x++) {
+		for (size_t y = 0; y < Img_Cpy.GetHeight(); y++) {
+			// Uzyskanie warto?ci jasno?ci dla piksela
+			unsigned char r = Img_Cpy.GetRed(x, y);
+			unsigned char g = Img_Cpy.GetGreen(x, y);
+			unsigned char b = Img_Cpy.GetBlue(x, y);
+
+			// Konwersja do skali szaro?ci
+			unsigned char brightness = 0.3 * r + 0.59 * g + 0.11 * b;
+
+			// Interpolacja liniowa mi?dzy ciemnym a jasnym odcieniem
+			unsigned char interpolated_hue[3];
+			for (int i = 0; i < 3; i++) {
+				interpolated_hue[i] = (brightness / 255.0) * light_hue[i] + (1 - brightness / 255.0) * dark_hue[i];
+			}
+
+			// Przypisanie odcienia do obrazu
+			Img_Cpy.SetRGB(x, y, interpolated_hue[0], interpolated_hue[1], interpolated_hue[2]);
+		}
+	}
+
+	// Od?wie?enie obrazu na panelu
+	Repaint();
 }
+
+
 
 void MainWorkingFrame::BtnLoadParametersClick( wxCommandEvent& event )
 {
