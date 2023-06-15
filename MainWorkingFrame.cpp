@@ -94,15 +94,15 @@ void MainWorkingFrame::BtnImportImageClick( wxCommandEvent& event )
 void MainWorkingFrame::setDefaultMixer()
 {
 	// zresetowanie ustawien suwakow
-	m_slider_red->SetValue(60);
-	m_slider_green->SetValue(118);
-	m_slider_blue->SetValue(22);
-	m_staticText2->SetLabel("Red: 60%");
-	m_staticText3->SetLabel("Green: 118%");
-	m_staticText4->SetLabel("Blue: 22%");
+	m_slider_red->SetValue(30);
+	m_slider_green->SetValue(59);
+	m_slider_blue->SetValue(11);
+	m_staticText2->SetLabel("Red: 30%");
+	m_staticText3->SetLabel("Green: 59%");
+	m_staticText4->SetLabel("Blue: 11%");
 
 	// zmieszanie kanalow i wyswietlenie podgladu
-	MixChannels(60, 118, 22);
+	MixChannels(30, 59, 11);
 }
 
 void MainWorkingFrame::OnScrollRed( wxScrollEvent& event )
@@ -267,9 +267,9 @@ void MainWorkingFrame::MixChannels(int r, int g, int b) {
 
 	for (int i = 0; i < Img_Cpy.GetWidth() * Img_Cpy.GetHeight(); i++) {
 		// procentowa wartosc suwaka
-		double red = (double)r / 200;
-		double green = (double)g / 200;
-		double blue = (double)b / 200;
+		double red = (double)r / 100;
+		double green = (double)g / 100;
+		double blue = (double)b / 100;
 
 		// konwersja do skali szarosci - mieszanie wedlug ustawien uzytkownika
 		unsigned char brightness = std::clamp(int(red * colors_org[i * 3] + green * colors_org[i * 3 + 1] + blue *colors_org[i * 3 + 2]), 0, 255);
