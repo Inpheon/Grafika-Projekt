@@ -85,19 +85,24 @@ void MainWorkingFrame::BtnImportImageClick( wxCommandEvent& event )
 			m_button_save_parameters->Enable(true);
 			m_button_restore->Enable(true);
 
-			// zresetowanie ustawien suwakow
-			m_slider_red->SetValue(30);
-			m_slider_green->SetValue(59);
-			m_slider_blue->SetValue(11);
-			m_staticText2->SetLabel("Red: 30%");
-			m_staticText3->SetLabel("Green: 59%");
-			m_staticText4->SetLabel("Blue: 11%");
-
-			// zmieszanie kanalow i wyswietlenie podgladu
-			MixChannels(30, 59, 11);
+			setDefaultMixer();
 			Repaint();
 		}
 	}
+}
+
+void MainWorkingFrame::setDefaultMixer()
+{
+	// zresetowanie ustawien suwakow
+	m_slider_red->SetValue(60);
+	m_slider_green->SetValue(118);
+	m_slider_blue->SetValue(22);
+	m_staticText2->SetLabel("Red: 60%");
+	m_staticText3->SetLabel("Green: 118%");
+	m_staticText4->SetLabel("Blue: 22%");
+
+	// zmieszanie kanalow i wyswietlenie podgladu
+	MixChannels(60, 118, 22);
 }
 
 void MainWorkingFrame::OnScrollRed( wxScrollEvent& event )
@@ -152,7 +157,7 @@ void MainWorkingFrame::OnScrollBlue( wxScrollEvent& event )
 void MainWorkingFrame::BtnBichromyClick(wxCommandEvent& event)
 {
 	/////////////////////////////////////
-	wxImage* Img_MixResult = &Img_Org; //TODO jak bedzie dzialalo mieszanie kolorow, zamienic Img_Org na obrazek wynikowy z mieszania
+	wxImage* Img_MixResult = &Img_GrayScale; 
 	/////////////////////////////////////
 
 
@@ -273,5 +278,7 @@ void MainWorkingFrame::MixChannels(int r, int g, int b) {
 		colors_cpy[i * 3] = brightness;		// r
 		colors_cpy[i * 3 + 1] = brightness;	// g
 		colors_cpy[i * 3 + 2] = brightness;	// b
+
+		Img_GrayScale = Img_Cpy;
 	}
 }

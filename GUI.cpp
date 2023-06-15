@@ -77,10 +77,10 @@ MainFrameBase::MainFrameBase( wxWindow* parent, wxWindowID id, const wxString& t
 	wxBoxSizer* bSizer7;
 	bSizer7 = new wxBoxSizer( wxHORIZONTAL );
 
-	m_colourPickerDark = new wxColourPickerCtrl( this, wxID_ANY, wxColour( 0, 0, 0 ), wxDefaultPosition, wxSize( 115,-1 ), wxCLRP_DEFAULT_STYLE );
+	m_colourPickerDark = new wxColourPickerCtrl( this, wxID_ANY, wxColour( 255,255, 255 ), wxDefaultPosition, wxSize( 115,-1 ), wxCLRP_DEFAULT_STYLE );
 	bSizer7->Add( m_colourPickerDark, 0, wxALIGN_CENTER|wxALL, 5 );
 
-	m_colourPickerLight = new wxColourPickerCtrl( this, wxID_ANY, wxColour( 255, 255, 255 ), wxDefaultPosition, wxSize( 115,-1 ), wxCLRP_DEFAULT_STYLE );
+	m_colourPickerLight = new wxColourPickerCtrl( this, wxID_ANY, wxColour( 0, 0, 0 ), wxDefaultPosition, wxSize( 115,-1 ), wxCLRP_DEFAULT_STYLE );
 	bSizer7->Add( m_colourPickerLight, 0, wxALIGN_CENTER|wxALL, 5 );
 
 

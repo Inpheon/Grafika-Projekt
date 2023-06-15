@@ -24,6 +24,7 @@ class MainWorkingFrame : public MainFrameBase
 		void FrameOnSize( wxSizeEvent& event );
 		void FrameOnUpdateUI( wxUpdateUIEvent& event );
 		void BtnImportImageClick( wxCommandEvent& event );
+		void setDefaultMixer();
 		void OnScrollRed( wxScrollEvent& event );
 		void OnScrollGreen( wxScrollEvent& event );
 		void OnScrollBlue( wxScrollEvent& event );
@@ -41,7 +42,7 @@ class MainWorkingFrame : public MainFrameBase
 		void bichromyGradientChanged(wxColourPickerEvent& event) {
 			wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED, m_button_bichromy->GetId());    GetEventHandler()->ProcessEvent(evt); BtnBichromyClick(evt);
 		}
-		void btnRestoreImageClick(wxCommandEvent& event) { Img_Cpy = Img_Org; Repaint(); }
+		void btnRestoreImageClick(wxCommandEvent& event) { Img_Cpy = Img_GrayScale = Img_Org.Copy(); setDefaultMixer(); Repaint(); } //Jezemy chcemy aby restore, przywracal kolorowy obrazek to nalezy zakomentowac setDefaultMixer()
 		cimg_library::CImg<unsigned char> wxImageToCImg(const wxImage& image);
 		wxImage CImgTowxImage(const cimg_library::CImg<unsigned char>& image);
 	
@@ -50,6 +51,7 @@ class MainWorkingFrame : public MainFrameBase
 		void MixChannels(int, int, int);
 		wxImage Img_Org;
 		wxImage Img_Cpy;
+		wxImage Img_GrayScale;
 
 };
 
