@@ -83,6 +83,7 @@ void MainWorkingFrame::BtnImportImageClick( wxCommandEvent& event )
 			m_button_load_parameters->Enable(true);
 			m_button_save_image->Enable(true);
 			m_button_save_parameters->Enable(true);
+			m_button_restore->Enable(true);
 
 			Repaint();
 		}
@@ -107,17 +108,26 @@ void MainWorkingFrame::OnScrollBlue( wxScrollEvent& event )
 
 void MainWorkingFrame::BtnBichromyClick(wxCommandEvent& event)
 {
-	// Odcienie dla jasnych i ciemnych partii
-	unsigned char dark_hue[3] = { 0, 0, 255 };  // ciemny odcien
-	unsigned char light_hue[3] = { 255, 255, 0 };  // jasny odcien
+	/////////////////////////////////////
+	wxImage* Img_MixResult = &Img_Org; //TODO jak bedzie dzialalo mieszanie kolorow, zamienic Img_Org na obrazek wynikowy z mieszania
+	/////////////////////////////////////
 
-	// Przejscie przez ka?dy piksel obrazu
-	for (size_t x = 0; x < Img_Cpy.GetWidth(); x++) {
-		for (size_t y = 0; y < Img_Cpy.GetHeight(); y++) {
+
+	// Pobierz wybrane kolory z Color Pickerow
+	wxColour dark_colour = m_colourPickerDark->GetColour();
+	wxColour light_colour = m_colourPickerLight->GetColour();
+
+	// Przypisz wartosci do tablicy odcieni
+	unsigned char dark_hue[3] = { dark_colour.Red(), dark_colour.Green(), dark_colour.Blue() };
+	unsigned char light_hue[3] = { light_colour.Red(), light_colour.Green(), light_colour.Blue() };
+
+	// Przejscie przez kazdy piksel obrazu
+	for (size_t x = 0; x < Img_MixResult->GetWidth(); x++) {
+		for (size_t y = 0; y < Img_MixResult->GetHeight(); y++) {
 			// Uzyskanie wartosci jasnosci dla piksela
-			unsigned char r = Img_Cpy.GetRed(x, y);
-			unsigned char g = Img_Cpy.GetGreen(x, y);
-			unsigned char b = Img_Cpy.GetBlue(x, y);
+			unsigned char r = Img_MixResult->GetRed(x, y);
+			unsigned char g = Img_MixResult->GetGreen(x, y);
+			unsigned char b = Img_MixResult->GetBlue(x, y);
 
 			// Konwersja do skali szarosci
 			unsigned char brightness = 0.3 * r + 0.59 * g + 0.11 * b;
