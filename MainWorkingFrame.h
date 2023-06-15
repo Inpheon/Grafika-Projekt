@@ -43,6 +43,7 @@ class MainWorkingFrame : public MainFrameBase
 	
 	private:
 		void Repaint();
+		void MixChannels(int r, int g, int b);
 		wxImage Img_Org;
 		wxImage Img_Cpy;
 

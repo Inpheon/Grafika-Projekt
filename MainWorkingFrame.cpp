@@ -92,16 +92,34 @@ void MainWorkingFrame::BtnImportImageClick( wxCommandEvent& event )
 void MainWorkingFrame::OnScrollRed( wxScrollEvent& event )
 {
 // TODO: Implement OnScrollRed
+	int red = m_slider_red->GetValue();
+	// tylko do podgladu
+	m_staticText2->SetLabel("Red: " + std::to_string(red) + "%");
+	//
+	MixChannels(red, -999, -999);
+	Repaint();
 }
 
 void MainWorkingFrame::OnScrollGreen( wxScrollEvent& event )
 {
 // TODO: Implement OnScrollGreen
+	int green = m_slider_green->GetValue();
+	// tylko do podgladu
+	m_staticText3->SetLabel("Green: " + std::to_string(green) + "%");
+	//
+	MixChannels(-999, green, -999);
+	Repaint();
 }
 
 void MainWorkingFrame::OnScrollBlue( wxScrollEvent& event )
 {
 // TODO: Implement OnScrollBlue
+	int blue = m_slider_blue->GetValue();
+	// tylko do podgladu
+	m_staticText4->SetLabel("Blue: " + std::to_string(blue) + "%");
+	//
+	MixChannels(- 999, -999, blue);
+	Repaint();
 }
 
 void MainWorkingFrame::BtnBichromyClick( wxCommandEvent& event )
@@ -167,4 +185,36 @@ void MainWorkingFrame::Repaint() {
 
 	wxBitmap bitmapa(Img_Preview);
 	dc.DrawBitmap(bitmapa, shiftX, shiftY);
+}
+
+void MainWorkingFrame::MixChannels(int r, int g, int b) {
+	unsigned char* colors_org = Img_Org.GetData();
+	unsigned char* colors_cpy = Img_Cpy.GetData();
+	for (int i = 0; i < Img_Cpy.GetWidth() * Img_Cpy.GetHeight(); i++) {
+		
+		// R channel
+		if (r >= -200 && r != 0) {
+			int NewRed = (int)colors_org[i * 3] * (double)r / 100;
+			NewRed += (int)colors_org[i * 3];
+			colors_cpy[i * 3] = (NewRed < 0 ? 0 : NewRed);
+			colors_cpy[i * 3] = (NewRed > 255 ? 255 : NewRed);
+
+		}
+		// G channel
+		if (g >= -200 && g != 0) {
+			int NewGreen = (int)colors_org[i * 3 + 1] * (double)g / 100;
+			NewGreen += (int)colors_org[i * 3 + 1];
+			colors_cpy[i * 3 + 1] = (NewGreen < 0 ? 0 : NewGreen);
+			colors_cpy[i * 3 + 1] = (NewGreen > 255 ? 255 : NewGreen);
+
+		}
+		// B channel
+		if (b >= -200 && b != 0) {
+			int NewBlue = (int)colors_org[i * 3 + 2] * (double)b / 100;
+			NewBlue += (int)colors_org[i * 3 + 2];
+			colors_cpy[i * 3 + 2] = (NewBlue < 0 ? 0 : NewBlue);
+			colors_cpy[i * 3 + 2] = (NewBlue > 255 ? 255 : NewBlue);
+
+		}
+	}
 }
