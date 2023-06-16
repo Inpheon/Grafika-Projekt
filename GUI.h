@@ -21,8 +21,8 @@
 #include <wx/stattext.h>
 #include <wx/slider.h>
 #include <wx/sizer.h>
-#include <wx/tglbtn.h>
 #include <wx/clrpicker.h>
+#include <wx/tglbtn.h>
 #include <wx/panel.h>
 #include <wx/frame.h>
 
@@ -46,6 +46,10 @@ class MainFrameBase : public wxFrame
 		wxStaticText* m_staticText4;
 		wxSlider* m_slider_blue;
 		wxButton* m_button_bichromy;
+		wxButton* m_button_restore;
+		wxStaticText* m_staticText11;
+		wxColourPickerCtrl* m_colourPickerDark;
+		wxColourPickerCtrl* m_colourPickerLight;
 		wxStaticText* m_staticText5;
 		wxButton* m_button_load_parameters;
 		wxButton* m_button_save_parameters;
@@ -66,6 +70,8 @@ class MainFrameBase : public wxFrame
 		virtual void OnScrollGreen( wxScrollEvent& event ) { event.Skip(); }
 		virtual void OnScrollBlue( wxScrollEvent& event ) { event.Skip(); }
 		virtual void BtnBichromyClick( wxCommandEvent& event ) { event.Skip(); }
+		virtual void btnRestoreImageClick( wxCommandEvent& event ) { event.Skip(); }
+		virtual void bichromyGradientChanged( wxColourPickerEvent& event ) { event.Skip(); }
 		virtual void BtnLoadParametersClick( wxCommandEvent& event ) { event.Skip(); }
 		virtual void BtnSaveParametersClick( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnScrollMixer( wxScrollEvent& event ) { event.Skip(); }

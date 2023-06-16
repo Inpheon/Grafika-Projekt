@@ -20,7 +20,7 @@ MainFrameBase::MainFrameBase( wxWindow* parent, wxWindowID id, const wxString& t
 	bSizer2 = new wxBoxSizer( wxVERTICAL );
 
 	bSizer2->SetMinSize( wxSize( 250,-1 ) );
-	btn_import_image = new wxButton( this, wxID_ANY, wxT("Wczytaj obrazek"), wxDefaultPosition, wxSize( 200,50 ), 0 );
+	btn_import_image = new wxButton( this, wxID_ANY, wxT("Wczytaj obrazek"), wxDefaultPosition, wxSize( 200,35 ), 0 );
 	bSizer2->Add( btn_import_image, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5 );
 
 	m_staticText1 = new wxStaticText( this, wxID_ANY, wxT("Manipulacje kanalami:"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -54,10 +54,37 @@ MainFrameBase::MainFrameBase( wxWindow* parent, wxWindowID id, const wxString& t
 
 	bSizer2->Add( m_slider_blue, 0, wxALIGN_CENTER|wxALL, 5 );
 
-	m_button_bichromy = new wxButton( this, wxID_ANY, wxT("Bichromia"), wxDefaultPosition, wxSize( 200,50 ), 0 );
+	wxBoxSizer* bSizer8;
+	bSizer8 = new wxBoxSizer( wxHORIZONTAL );
+
+	m_button_bichromy = new wxButton( this, wxID_ANY, wxT("Bichromia"), wxDefaultPosition, wxSize( 115,20 ), 0 );
 	m_button_bichromy->Enable( false );
 
-	bSizer2->Add( m_button_bichromy, 0, wxALIGN_CENTER|wxALL, 5 );
+	bSizer8->Add( m_button_bichromy, 0, wxALIGN_CENTER|wxALL, 5 );
+
+	m_button_restore = new wxButton( this, wxID_ANY, wxT("Resetuj obrazek"), wxDefaultPosition, wxSize( 115,-1 ), 0 );
+	m_button_restore->Enable( false );
+
+	bSizer8->Add( m_button_restore, 0, wxALIGN_CENTER|wxALL, 5 );
+
+
+	bSizer2->Add( bSizer8, 1, wxEXPAND, 5 );
+
+	m_staticText11 = new wxStaticText( this, wxID_ANY, wxT("Gradient bichromii:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText11->Wrap( -1 );
+	bSizer2->Add( m_staticText11, 0, wxALL, 5 );
+
+	wxBoxSizer* bSizer7;
+	bSizer7 = new wxBoxSizer( wxHORIZONTAL );
+
+	m_colourPickerDark = new wxColourPickerCtrl( this, wxID_ANY, wxColour( 255,255, 255 ), wxDefaultPosition, wxSize( 115,-1 ), wxCLRP_DEFAULT_STYLE );
+	bSizer7->Add( m_colourPickerDark, 0, wxALIGN_CENTER|wxALL, 5 );
+
+	m_colourPickerLight = new wxColourPickerCtrl( this, wxID_ANY, wxColour( 0, 0, 0 ), wxDefaultPosition, wxSize( 115,-1 ), wxCLRP_DEFAULT_STYLE );
+	bSizer7->Add( m_colourPickerLight, 0, wxALIGN_CENTER|wxALL, 5 );
+
+
+	bSizer2->Add( bSizer7, 1, wxEXPAND, 5 );
 
 	m_staticText5 = new wxStaticText( this, wxID_ANY, wxT("Zagadnienia dodatkowe:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText5->Wrap( -1 );
@@ -163,6 +190,9 @@ MainFrameBase::MainFrameBase( wxWindow* parent, wxWindowID id, const wxString& t
 	m_slider_blue->Connect( wxEVT_SCROLL_THUMBRELEASE, wxScrollEventHandler( MainFrameBase::OnScrollBlue ), NULL, this );
 	m_slider_blue->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( MainFrameBase::OnScrollBlue ), NULL, this );
 	m_button_bichromy->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrameBase::BtnBichromyClick ), NULL, this );
+	m_button_restore->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrameBase::btnRestoreImageClick ), NULL, this );
+	m_colourPickerDark->Connect( wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler( MainFrameBase::bichromyGradientChanged ), NULL, this );
+	m_colourPickerLight->Connect( wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler( MainFrameBase::bichromyGradientChanged ), NULL, this );
 	m_button_load_parameters->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrameBase::BtnLoadParametersClick ), NULL, this );
 	m_button_save_parameters->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrameBase::BtnSaveParametersClick ), NULL, this );
 	m_slider_mixing_level->Connect( wxEVT_SCROLL_TOP, wxScrollEventHandler( MainFrameBase::OnScrollMixer ), NULL, this );
@@ -214,6 +244,9 @@ MainFrameBase::~MainFrameBase()
 	m_slider_blue->Disconnect( wxEVT_SCROLL_THUMBRELEASE, wxScrollEventHandler( MainFrameBase::OnScrollBlue ), NULL, this );
 	m_slider_blue->Disconnect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( MainFrameBase::OnScrollBlue ), NULL, this );
 	m_button_bichromy->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrameBase::BtnBichromyClick ), NULL, this );
+	m_button_restore->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrameBase::btnRestoreImageClick ), NULL, this );
+	m_colourPickerDark->Disconnect( wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler( MainFrameBase::bichromyGradientChanged ), NULL, this );
+	m_colourPickerLight->Disconnect( wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler( MainFrameBase::bichromyGradientChanged ), NULL, this );
 	m_button_load_parameters->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrameBase::BtnLoadParametersClick ), NULL, this );
 	m_button_save_parameters->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrameBase::BtnSaveParametersClick ), NULL, this );
 	m_slider_mixing_level->Disconnect( wxEVT_SCROLL_TOP, wxScrollEventHandler( MainFrameBase::OnScrollMixer ), NULL, this );
