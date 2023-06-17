@@ -1,4 +1,5 @@
-#include "MainWorkingFrame.h"
+﻿#include "MainWorkingFrame.h"
+#include "./pugixml.hpp"
 
 MainWorkingFrame::MainWorkingFrame( wxWindow* parent )
 :
@@ -195,17 +196,157 @@ void MainWorkingFrame::BtnBichromyClick(wxCommandEvent& event)
 	Repaint();
 }
 
-
-
-void MainWorkingFrame::BtnLoadParametersClick( wxCommandEvent& event )
+void MainWorkingFrame::BtnLoadParametersClick(wxCommandEvent& event)
 {
-// TODO: Implement BtnLoadParametersClick
+	// Utworz okienko dialogowe do wczytania pliku
+	wxFileDialog openFileDialog(this, "Wczytaj ustawienia", "", "", "XML Files (*.xml)|*.xml", wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+
+	// Wyswietl okienko dialogowe
+	if (openFileDialog.ShowModal() == wxID_OK)
+	{
+		// Pobierz sciezke wybranek pliku
+		wxString filePath = openFileDialog.GetPath();
+		pugi::xml_document doc;
+
+		// Wczytaj dokument XML z pliku
+		if (!doc.load_file(filePath.ToStdString().c_str()))
+		{
+			wxMessageBox("Nie mozna wczytac parametrow z pliku!", "Wczytywanie Parametrow", wxOK | wxICON_ERROR);
+			return;
+		}
+
+		// Pobierz wezel glowny
+		pugi::xml_node root = doc.child("Settings");
+		if (!root)
+		{
+			wxMessageBox("Nieprawidlowy format pliku XML!", "Wczytywanie Parametrow", wxOK | wxICON_ERROR);
+			return;
+		}
+
+		// Znajdź i ustaw wartości suwaków i wyboru koloru
+		for (pugi::xml_node parameter = root.child("Parameter"); parameter; parameter = parameter.next_sibling("Parameter"))
+		{
+			wxString name = parameter.attribute("name").as_string();
+			wxString value = parameter.attribute("value").as_string();
+
+			if (name == "RedSlider")
+			{
+				int redValue = wxAtoi(value);
+				m_slider_red->SetValue(redValue);
+				m_staticText2->SetLabel("Red: " + std::to_string(redValue) + "%");
+
+			}
+			else if (name == "GreenSlider")
+			{
+				int greenValue = wxAtoi(value);
+				m_slider_green->SetValue(greenValue);
+				m_staticText3->SetLabel("Green: " + std::to_string(greenValue) + "%");
+
+			}
+			else if (name == "BlueSlider")
+			{
+				int blueValue = wxAtoi(value);
+				m_slider_blue->SetValue(blueValue);
+				m_staticText4->SetLabel("Blue: " + std::to_string(blueValue) + "%");
+
+			}
+			else if (name == "BichromyLightColor")
+			{
+				wxColour color;
+				color.Set(value);
+				m_colourPickerLight->SetColour(color);
+			}
+			else if (name == "BichromyDarkColor")
+			{
+				wxColour color;
+				color.Set(value);
+				m_colourPickerDark->SetColour(color);
+			}
+			else if (name == "KeepingHue")
+			{
+				bool keepHue = (value == "1" || value.Lower() == "true");
+				m_toggleBtn_keep_hue->SetValue(keepHue);
+			}
+			else if (name == "HueToKeep")
+			{
+				wxColour color;
+				color.Set(value);
+				m_colourPicker->SetColour(color);
+			}
+			else if (name == "MixingRate")
+			{
+				int mixingRate = wxAtoi(value);
+				m_slider_mixing_level->SetValue(mixingRate);
+			}
+			// Dodaj dodatkowe warunki dla innych parametrów, jeśli jest to konieczne
+		}
+		MixChannels(m_slider_red->GetValue(), m_slider_green->GetValue(), m_slider_blue->GetValue());
+		wxMessageBox("Parametry wczytane pomyslnie!", "Wczytywanie Parametrow", wxOK | wxICON_INFORMATION);
+		Repaint();
+	}
 }
 
 void MainWorkingFrame::BtnSaveParametersClick( wxCommandEvent& event )
 {
-// TODO: Implement BtnSaveParametersClick
-}
+
+	wxFileDialog saveFileDialog(this, "Zapisz ustawienia", "", "", "XML Files (*.xml)|*.xml", wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
+
+	saveFileDialog.SetFilename("Parametry.xml");
+
+	// Wyświetl okienko dialogowe
+	if (saveFileDialog.ShowModal() == wxID_OK)
+	{
+		// Pobierz wybrana nazwe i lokalizacje pliku.
+		wxString filePath = saveFileDialog.GetPath();
+		pugi::xml_document doc;
+
+		// Utworz wezel glowny
+		pugi::xml_node root = doc.append_child("Settings");
+
+		// Dodaj elementy podrzedne z danymi
+		pugi::xml_node element1 = root.append_child("Parameter");
+		element1.append_attribute("name") = "RedSlider";
+		element1.append_attribute("value") = m_slider_red->GetValue();
+
+		pugi::xml_node element2 = root.append_child("Parameter");
+		element2.append_attribute("name") = "GreenSlider";
+		element2.append_attribute("value") = m_slider_green->GetValue();
+
+		pugi::xml_node element3 = root.append_child("Parameter");
+		element3.append_attribute("name") = "BlueSlider";
+		element3.append_attribute("value") = m_slider_blue->GetValue();
+
+		pugi::xml_node element4 = root.append_child("Parameter");
+		element4.append_attribute("name") = "BichromyLightColor";
+		element4.append_attribute("value") = m_colourPickerLight->GetColour().GetAsString();
+
+		pugi::xml_node element5 = root.append_child("Parameter");
+		element5.append_attribute("name") = "BichromyDarkColor";
+		element5.append_attribute("value") = m_colourPickerDark->GetColour().GetAsString();
+
+		pugi::xml_node element6 = root.append_child("Parameter");
+		element6.append_attribute("name") = "KeepingHue";
+		element6.append_attribute("value") = m_toggleBtn_keep_hue->GetValue();
+
+		pugi::xml_node element7 = root.append_child("Parameter");
+		element7.append_attribute("name") = "HueToKeep";
+		element7.append_attribute("value") = m_colourPicker->GetColour().GetAsString();
+
+		pugi::xml_node element8 = root.append_child("Parameter");
+		element8.append_attribute("name") = "MixingRate";
+		element8.append_attribute("value") = m_slider_mixing_level->GetValue();
+
+		// Zapisz dokument XML do wybranego pliku w czytelnym dla czlowieka formacie
+		if (doc.save_file(filePath.ToStdString().c_str(), "  ", pugi::format_default | pugi::format_indent))
+		{
+			wxMessageBox("Parametry zapisano poprawnie!", "Zapisz parametry", wxOK | wxICON_INFORMATION);
+		}
+		else
+		{
+			wxMessageBox("Nie udalo sie zapisac parametrow!", "Napisz parametry", wxOK | wxICON_ERROR);
+		}
+	}
+	}
 
 void MainWorkingFrame::OnScrollMixer( wxScrollEvent& event )
 {
