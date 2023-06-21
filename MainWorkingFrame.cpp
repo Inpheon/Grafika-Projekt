@@ -69,7 +69,7 @@ void MainWorkingFrame::BtnImportImageClick( wxCommandEvent& event )
 		wxImage::AddHandler(new wxPNGHandler);
 
 		// oryginalne zdjecie, nie podlega zadnej edycji, Img_Org podlega zmianie tylko gdy zaladujemy nowe zdjecie
-		Img_Org = wxImage(WxOpenFileDialog.GetPath(), wxBITMAP_TYPE_JPEG);
+		Img_Org = wxImage(WxOpenFileDialog.GetPath(), wxBITMAP_TYPE_ANY);
 
 		if (Img_Org.IsOk()) {
 			// wszystkie operacje zwiazane z graficznymi przeksztalceniami robione na Img_Cpy
@@ -360,6 +360,52 @@ void MainWorkingFrame::OnScrollMixer( wxScrollEvent& event )
 void MainWorkingFrame::ToggleKeepingHueClick( wxCommandEvent& event )
 {
 // TODO: Implement ToggleKeepingHueClick
+
+	// wartosc RGB zczytana z colorpickera
+	wxImage::RGBValue picker_RGB(
+		m_colourPicker->GetColour().Red(),
+		m_colourPicker->GetColour().Green(),
+		m_colourPicker->GetColour().Blue()
+	);
+
+	// konwersja RGB na HSV
+	wxImage::HSVValue picker_HSV = Img_Cpy.RGBtoHSV(picker_RGB);
+
+	// tablica kolorow oryginalnego zdjecia
+	unsigned char* colors_org = Img_Org.GetData();
+	// tablica kolorow kopii roboczej
+	unsigned char* colors_cpy = Img_Cpy.GetData();
+
+	for (int i = 0; i < Img_Cpy.GetWidth() * Img_Cpy.GetHeight(); i++) {
+
+		// skladowe koloru piksela w oryginalnym obrazie
+		int red = colors_org[i * 3];
+		int green = colors_org[i * 3 + 1];
+		int blue = colors_org[i * 3 + 2];
+
+		// wartosc RGB piksela
+		wxImage::RGBValue pixel_RGB(
+			red,
+			green,
+			blue
+		);
+
+		// konwersja RGB na HSV
+		wxImage::HSVValue pixel_HSV = Img_Cpy.RGBtoHSV(pixel_RGB);
+
+		if (pixel_HSV.hue == picker_HSV.hue) {
+			// jezeli parametr HUE piksela oraz barwy z colorpickera sa takie same to pozostawiamy ten kolor na obrazie
+			colors_cpy[i * 3] = colors_org[i * 3];
+			colors_cpy[i * 3 + 1] = colors_org[i * 3 + 1];
+			colors_cpy[i * 3 + 2] = colors_org[i * 3 + 2];
+		}
+		else {
+			// tutaj wersja gdy HUE nie jest takie same - wówczas miszamy barwy proporcjonalnie do oddalnia od siebie nasycenia kolorów
+		}
+
+	}
+
+	Repaint();
 }
 
 void MainWorkingFrame::ColorChanged( wxColourPickerEvent& event )
