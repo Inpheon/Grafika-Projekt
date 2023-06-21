@@ -355,11 +355,18 @@ void MainWorkingFrame::BtnSaveParametersClick( wxCommandEvent& event )
 void MainWorkingFrame::OnScrollMixer( wxScrollEvent& event )
 {
 // TODO: Implement OnScrollMixer
+	wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED, m_toggleBtn_keep_hue->GetId());    GetEventHandler()->ProcessEvent(evt); ToggleKeepingHueClick(evt);
 }
 
 void MainWorkingFrame::ToggleKeepingHueClick( wxCommandEvent& event )
 {
 // TODO: Implement ToggleKeepingHueClick
+
+	/////////////////////////////////////////////
+	//		POTRZEBNE LICZNE USPRAWNIENIA	   //
+	/////////////////////////////////////////////
+
+	double val = (double)m_slider_mixing_level->GetValue() / 100.0;
 
 	// wartosc RGB zczytana z colorpickera
 	wxImage::RGBValue picker_RGB(
@@ -375,6 +382,8 @@ void MainWorkingFrame::ToggleKeepingHueClick( wxCommandEvent& event )
 	unsigned char* colors_org = Img_Org.GetData();
 	// tablica kolorow kopii roboczej
 	unsigned char* colors_cpy = Img_Cpy.GetData();
+
+	unsigned char* gray_cpy = Img_GrayScale.GetData();
 
 	for (int i = 0; i < Img_Cpy.GetWidth() * Img_Cpy.GetHeight(); i++) {
 
@@ -401,6 +410,23 @@ void MainWorkingFrame::ToggleKeepingHueClick( wxCommandEvent& event )
 		}
 		else {
 			// tutaj wersja gdy HUE nie jest takie same - wówczas miszamy barwy proporcjonalnie do oddalnia od siebie nasycenia kolorów
+			double p = fabs(pixel_HSV.hue * 360 - picker_HSV.hue * 360);
+			if (p > 180)
+				p = 360 - p;
+
+			p = p / 180.0;
+			
+			int r = (double)colors_org[i * 3] * (1.0 - p) + (double)gray_cpy[i * 3] * p;
+			int g = (double)colors_org[i * 3 + 1] * (1.0 - p) + (double)gray_cpy[i * 3 + 1] * p;
+			int b = (double)colors_org[i * 3 + 2] * (1.0 - p) + (double)gray_cpy[i * 3 + 2] * p;
+
+			r = std::clamp(r, 0, 255);
+			g = std::clamp(g, 0, 255);
+			b = std::clamp(b, 0, 255);
+
+			colors_cpy[i * 3] = r;
+			colors_cpy[i * 3 + 1] = g;
+			colors_cpy[i * 3 + 2] = b;
 		}
 
 	}
