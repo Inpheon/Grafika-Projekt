@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version 3.10.1-282-g1fa54006)
+// C++ code generated with wxFormBuilder (version 3.10.1-0-g8feb16b3)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO *NOT* EDIT THIS FILE!
@@ -77,10 +77,14 @@ MainFrameBase::MainFrameBase( wxWindow* parent, wxWindowID id, const wxString& t
 	wxBoxSizer* bSizer7;
 	bSizer7 = new wxBoxSizer( wxHORIZONTAL );
 
-	m_colourPickerDark = new wxColourPickerCtrl( this, wxID_ANY, wxColour( 255,255, 255 ), wxDefaultPosition, wxSize( 115,-1 ), wxCLRP_DEFAULT_STYLE );
+	m_colourPickerDark = new wxColourPickerCtrl( this, wxID_ANY, wxColour( 0, 0, 0 ), wxDefaultPosition, wxSize( 115,-1 ), wxCLRP_DEFAULT_STYLE );
+	m_colourPickerDark->Enable( false );
+
 	bSizer7->Add( m_colourPickerDark, 0, wxALIGN_CENTER|wxALL, 5 );
 
-	m_colourPickerLight = new wxColourPickerCtrl( this, wxID_ANY, wxColour( 0, 0, 0 ), wxDefaultPosition, wxSize( 115,-1 ), wxCLRP_DEFAULT_STYLE );
+	m_colourPickerLight = new wxColourPickerCtrl( this, wxID_ANY, wxColour( 255, 255, 255 ), wxDefaultPosition, wxSize( 115,-1 ), wxCLRP_DEFAULT_STYLE );
+	m_colourPickerLight->Enable( false );
+
 	bSizer7->Add( m_colourPickerLight, 0, wxALIGN_CENTER|wxALL, 5 );
 
 
@@ -123,9 +127,13 @@ MainFrameBase::MainFrameBase( wxWindow* parent, wxWindowID id, const wxString& t
 	bSizer4 = new wxBoxSizer( wxHORIZONTAL );
 
 	m_toggleBtn_keep_hue = new wxToggleButton( this, wxID_ANY, wxT("Pozostaw barwe"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_toggleBtn_keep_hue->Enable( false );
+
 	bSizer4->Add( m_toggleBtn_keep_hue, 0, wxALL, 5 );
 
 	m_colourPicker = new wxColourPickerCtrl( this, wxID_ANY, *wxBLACK, wxDefaultPosition, wxSize( 120,-1 ), wxCLRP_DEFAULT_STYLE );
+	m_colourPicker->Enable( false );
+
 	bSizer4->Add( m_colourPicker, 0, wxALL, 5 );
 
 

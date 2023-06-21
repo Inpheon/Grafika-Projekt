@@ -85,6 +85,10 @@ void MainWorkingFrame::BtnImportImageClick( wxCommandEvent& event )
 			m_button_save_image->Enable(true);
 			m_button_save_parameters->Enable(true);
 			m_button_restore->Enable(true);
+			m_toggleBtn_keep_hue->Enable(true);
+			m_colourPickerDark->Enable(true);
+			m_colourPickerLight->Enable(true);
+			m_colourPicker->Enable(true);
 
 			setDefaultMixer();
 			Repaint();
