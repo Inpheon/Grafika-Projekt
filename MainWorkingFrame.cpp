@@ -358,16 +358,13 @@ void MainWorkingFrame::OnScrollMixer( wxScrollEvent& event )
 	wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED, m_toggleBtn_keep_hue->GetId());    GetEventHandler()->ProcessEvent(evt); ToggleKeepingHueClick(evt);
 }
 
-void MainWorkingFrame::ToggleKeepingHueClick( wxCommandEvent& event )
+void MainWorkingFrame::ToggleKeepingHueClick(wxCommandEvent& event)
 {
-// TODO: Implement ToggleKeepingHueClick
+	// TODO: Implement ToggleKeepingHueClick
 
-	// dodane, żeby na opracje były przeprowadzane na zdjęciu w skali szarości (bez tej linijki każde kolejne kliknięcie "pozostaw barwe" wzmacniało efekt)
+	// dodane, żeby na opracje były przeprowadzane na zdjęciu w skali szarości
 	Img_Cpy = Img_GrayScale.Copy();
 
-	/////////////////////////////////////////////
-	//		POTRZEBNE LICZNE USPRAWNIENIA	   //
-	/////////////////////////////////////////////
 
 	// parametr kotrolujący siłę zanikania barw
 	double val = (double)m_slider_mixing_level->GetValue() / 100.0;
@@ -406,37 +403,37 @@ void MainWorkingFrame::ToggleKeepingHueClick( wxCommandEvent& event )
 		// konwersja RGB na HSV
 		wxImage::HSVValue pixel_HSV = Img_Cpy.RGBtoHSV(pixel_RGB);
 
-		if (pixel_HSV.hue == picker_HSV.hue) {
+		double diff = fabs(pixel_HSV.hue * 360 - picker_HSV.hue * 360);
+		if (diff > 180)
+			diff = 360 - diff;
+
+		diff = diff / 180.0;
+
+		if (diff <= val) {
 			// jezeli parametr HUE piksela oraz barwy z colorpickera sa takie same to pozostawiamy ten kolor na obrazie
 			colors_cpy[i * 3] = colors_org[i * 3];
 			colors_cpy[i * 3 + 1] = colors_org[i * 3 + 1];
 			colors_cpy[i * 3 + 2] = colors_org[i * 3 + 2];
 		}
 		else {
-			// tutaj wersja gdy HUE nie jest takie same - wówczas miszamy barwy proporcjonalnie do oddalnia od siebie nasycenia kolorów
-			double p = fabs(pixel_HSV.hue * 360 - picker_HSV.hue * 360);
-			if (p > 180)
-				p = 360 - p;
+			// Jeżeli różnica między odcieniami przekracza ustalony próg (tutaj jest to dwukrotność wartości suwaka), kolor piksela zostaje zamieniony na kolor z obrazu w skali szarości
+			if (diff > 2 * val) {
+				colors_cpy[i * 3] = gray_cpy[i * 3];
+				colors_cpy[i * 3 + 1] = gray_cpy[i * 3 + 1];
+				colors_cpy[i * 3 + 2] = gray_cpy[i * 3 + 2];
+			}
+			else {
+				// wówczas miszamy barwy proporcjonalnie do oddalnia od siebie nasycenia kolorów
+				int r = std::clamp((double)colors_org[i * 3] * (1.0 - diff), 0., 255.) + std::clamp((double)gray_cpy[i * 3] * diff, 0.0, 255.0);
+				int g = std::clamp((double)colors_org[i * 3 + 1] * (1.0 - diff), 0., 255.) + std::clamp((double)gray_cpy[i * 3 + 1] * diff, 0.0, 255.0);
+				int b = std::clamp((double)colors_org[i * 3 + 2] * (1.0 - diff), 0., 255.) + std::clamp((double)gray_cpy[i * 3 + 2] * diff, 0.0, 255.0);
 
-			p = p / 180.0;
-
-			p = p * val*5;
-			
-			int r = std::clamp((double)colors_org[i * 3] * (1.0 - p),0.,255.) + std::clamp((double)gray_cpy[i * 3] * p,0.0,255.0);
-			int g = std::clamp((double)colors_org[i * 3 + 1] * (1.0 - p),0.,255.) + std::clamp((double)gray_cpy[i * 3 +1] * p, 0.0, 255.0);
-			int b = std::clamp((double)colors_org[i * 3 + 2] * (1.0 - p),0.,255.) + std::clamp((double)gray_cpy[i * 3 +2] * p, 0.0, 255.0);
-
-			r = std::clamp(r, 0, 255);
-			g = std::clamp(g, 0, 255);
-			b = std::clamp(b, 0, 255);
-
-			colors_cpy[i * 3] = r;
-			colors_cpy[i * 3 + 1] = g;
-			colors_cpy[i * 3 + 2] = b;
+				colors_cpy[i * 3] = r;
+				colors_cpy[i * 3 + 1] = g;
+				colors_cpy[i * 3 + 2] = b;
+			}
 		}
-
 	}
-
 	Repaint();
 }
 
