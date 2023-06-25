@@ -61,7 +61,6 @@ void MainWorkingFrame::FrameOnUpdateUI( wxUpdateUIEvent& event )
 
 void MainWorkingFrame::BtnImportImageClick( wxCommandEvent& event )
 {
-// TODO: Implement BtnImportImageClick
 	wxFileDialog WxOpenFileDialog(this, wxT("Choose a file"), wxT(""), wxT(""), wxT("JPG and PNG files (*.jpg;*.png)|*.jpg;*.png"), wxFD_OPEN | wxFD_FILE_MUST_EXIST);
 
 	if (WxOpenFileDialog.ShowModal() == wxID_OK){
@@ -69,7 +68,7 @@ void MainWorkingFrame::BtnImportImageClick( wxCommandEvent& event )
 		wxImage::AddHandler(new wxPNGHandler);
 
 		// oryginalne zdjecie, nie podlega zadnej edycji, Img_Org podlega zmianie tylko gdy zaladujemy nowe zdjecie
-		Img_Org = wxImage(WxOpenFileDialog.GetPath(), wxBITMAP_TYPE_JPEG);
+		Img_Org = wxImage(WxOpenFileDialog.GetPath(), wxBITMAP_TYPE_ANY);
 
 		if (Img_Org.IsOk()) {
 			// wszystkie operacje zwiazane z graficznymi przeksztalceniami robione na Img_Cpy
@@ -79,12 +78,15 @@ void MainWorkingFrame::BtnImportImageClick( wxCommandEvent& event )
 			m_slider_red->Enable(true);
 			m_slider_green->Enable(true);
 			m_slider_blue->Enable(true);
-			m_slider_mixing_level->Enable(true);
 			m_button_bichromy->Enable(true);
 			m_button_load_parameters->Enable(true);
 			m_button_save_image->Enable(true);
 			m_button_save_parameters->Enable(true);
 			m_button_restore->Enable(true);
+			m_toggleBtn_keep_hue->Enable(true);
+			m_colourPickerDark->Enable(true);
+			m_colourPickerLight->Enable(true);
+			m_colourPicker->Enable(true);
 
 			setDefaultMixer();
 			Repaint();
@@ -108,7 +110,6 @@ void MainWorkingFrame::setDefaultMixer()
 
 void MainWorkingFrame::OnScrollRed( wxScrollEvent& event )
 {
-// TODO: Implement OnScrollRed
 	int red = m_slider_red->GetValue();
 	int green = m_slider_green->GetValue();
 	int blue = m_slider_blue->GetValue();
@@ -124,7 +125,6 @@ void MainWorkingFrame::OnScrollRed( wxScrollEvent& event )
 
 void MainWorkingFrame::OnScrollGreen( wxScrollEvent& event )
 {
-// TODO: Implement OnScrollGreen
 	int red = m_slider_red->GetValue();
 	int green = m_slider_green->GetValue();
 	int blue = m_slider_blue->GetValue();
@@ -140,7 +140,6 @@ void MainWorkingFrame::OnScrollGreen( wxScrollEvent& event )
 
 void MainWorkingFrame::OnScrollBlue( wxScrollEvent& event )
 {
-// TODO: Implement OnScrollBlue
 	int red = m_slider_red->GetValue();
 	int green = m_slider_green->GetValue();
 	int blue = m_slider_blue->GetValue();
@@ -350,12 +349,90 @@ void MainWorkingFrame::BtnSaveParametersClick( wxCommandEvent& event )
 
 void MainWorkingFrame::OnScrollMixer( wxScrollEvent& event )
 {
-// TODO: Implement OnScrollMixer
+	if (m_toggleBtn_keep_hue->GetValue())
+	{
+		wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED, m_toggleBtn_keep_hue->GetId());    GetEventHandler()->ProcessEvent(evt); ToggleKeepingHueClick(evt);
+	}
 }
 
-void MainWorkingFrame::ToggleKeepingHueClick( wxCommandEvent& event )
+void MainWorkingFrame::ToggleKeepingHueClick(wxCommandEvent& event)
 {
-// TODO: Implement ToggleKeepingHueClick
+
+	if (m_toggleBtn_keep_hue->GetValue()) m_slider_mixing_level->Enable(); else m_slider_mixing_level->Disable();
+
+	// dodane, żeby na opracje były przeprowadzane na zdjęciu w skali szarości
+	Img_Cpy = Img_GrayScale.Copy();
+
+
+	// parametr kotrolujący siłę zanikania barw
+	double val = (double)m_slider_mixing_level->GetValue() / 100.0;
+
+	// wartosc RGB zczytana z colorpickera
+	wxImage::RGBValue picker_RGB(
+		m_colourPicker->GetColour().Red(),
+		m_colourPicker->GetColour().Green(),
+		m_colourPicker->GetColour().Blue()
+	);
+
+	// konwersja RGB na HSV
+	wxImage::HSVValue picker_HSV = Img_Cpy.RGBtoHSV(picker_RGB);
+
+	// tablica kolorow oryginalnego zdjecia
+	unsigned char* colors_org = Img_Org.GetData();
+	// tablica kolorow kopii roboczej
+	unsigned char* colors_cpy = Img_Cpy.GetData();
+
+	unsigned char* gray_cpy = Img_GrayScale.GetData();
+
+	for (int i = 0; i < Img_Cpy.GetWidth() * Img_Cpy.GetHeight(); i++) {
+
+		// skladowe koloru piksela w oryginalnym obrazie
+		int red = colors_org[i * 3];
+		int green = colors_org[i * 3 + 1];
+		int blue = colors_org[i * 3 + 2];
+
+		// wartosc RGB piksela
+		wxImage::RGBValue pixel_RGB(
+			red,
+			green,
+			blue
+		);
+
+		// konwersja RGB na HSV
+		wxImage::HSVValue pixel_HSV = Img_Cpy.RGBtoHSV(pixel_RGB);
+
+		double diff = fabs(pixel_HSV.hue * 360 - picker_HSV.hue * 360);
+		if (diff > 180)
+			diff = 360 - diff;
+
+		diff = diff / 180.0;
+
+		if (diff <= val) {
+			// jezeli parametr HUE piksela oraz barwy z colorpickera sa takie same to pozostawiamy ten kolor na obrazie
+			colors_cpy[i * 3] = colors_org[i * 3];
+			colors_cpy[i * 3 + 1] = colors_org[i * 3 + 1];
+			colors_cpy[i * 3 + 2] = colors_org[i * 3 + 2];
+		}
+		else {
+			// Jeżeli różnica między odcieniami przekracza ustalony próg (tutaj jest to dwukrotność wartości suwaka), kolor piksela zostaje zamieniony na kolor z obrazu w skali szarości
+			if (diff > 2 * val) {
+				colors_cpy[i * 3] = gray_cpy[i * 3];
+				colors_cpy[i * 3 + 1] = gray_cpy[i * 3 + 1];
+				colors_cpy[i * 3 + 2] = gray_cpy[i * 3 + 2];
+			}
+			else {
+				// wówczas miszamy barwy proporcjonalnie do oddalnia od siebie nasycenia kolorów
+				int r = std::clamp((double)colors_org[i * 3] * (1.0 - diff), 0., 255.) + std::clamp((double)gray_cpy[i * 3] * diff, 0.0, 255.0);
+				int g = std::clamp((double)colors_org[i * 3 + 1] * (1.0 - diff), 0., 255.) + std::clamp((double)gray_cpy[i * 3 + 1] * diff, 0.0, 255.0);
+				int b = std::clamp((double)colors_org[i * 3 + 2] * (1.0 - diff), 0., 255.) + std::clamp((double)gray_cpy[i * 3 + 2] * diff, 0.0, 255.0);
+
+				colors_cpy[i * 3] = r;
+				colors_cpy[i * 3 + 1] = g;
+				colors_cpy[i * 3 + 2] = b;
+			}
+		}
+	}
+	Repaint();
 }
 
 void MainWorkingFrame::ColorChanged( wxColourPickerEvent& event )
