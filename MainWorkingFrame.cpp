@@ -61,7 +61,6 @@ void MainWorkingFrame::FrameOnUpdateUI( wxUpdateUIEvent& event )
 
 void MainWorkingFrame::BtnImportImageClick( wxCommandEvent& event )
 {
-// TODO: Implement BtnImportImageClick
 	wxFileDialog WxOpenFileDialog(this, wxT("Choose a file"), wxT(""), wxT(""), wxT("JPG and PNG files (*.jpg;*.png)|*.jpg;*.png"), wxFD_OPEN | wxFD_FILE_MUST_EXIST);
 
 	if (WxOpenFileDialog.ShowModal() == wxID_OK){
@@ -79,7 +78,6 @@ void MainWorkingFrame::BtnImportImageClick( wxCommandEvent& event )
 			m_slider_red->Enable(true);
 			m_slider_green->Enable(true);
 			m_slider_blue->Enable(true);
-			m_slider_mixing_level->Enable(true);
 			m_button_bichromy->Enable(true);
 			m_button_load_parameters->Enable(true);
 			m_button_save_image->Enable(true);
@@ -112,7 +110,6 @@ void MainWorkingFrame::setDefaultMixer()
 
 void MainWorkingFrame::OnScrollRed( wxScrollEvent& event )
 {
-// TODO: Implement OnScrollRed
 	int red = m_slider_red->GetValue();
 	int green = m_slider_green->GetValue();
 	int blue = m_slider_blue->GetValue();
@@ -128,7 +125,6 @@ void MainWorkingFrame::OnScrollRed( wxScrollEvent& event )
 
 void MainWorkingFrame::OnScrollGreen( wxScrollEvent& event )
 {
-// TODO: Implement OnScrollGreen
 	int red = m_slider_red->GetValue();
 	int green = m_slider_green->GetValue();
 	int blue = m_slider_blue->GetValue();
@@ -144,7 +140,6 @@ void MainWorkingFrame::OnScrollGreen( wxScrollEvent& event )
 
 void MainWorkingFrame::OnScrollBlue( wxScrollEvent& event )
 {
-// TODO: Implement OnScrollBlue
 	int red = m_slider_red->GetValue();
 	int green = m_slider_green->GetValue();
 	int blue = m_slider_blue->GetValue();
@@ -354,13 +349,16 @@ void MainWorkingFrame::BtnSaveParametersClick( wxCommandEvent& event )
 
 void MainWorkingFrame::OnScrollMixer( wxScrollEvent& event )
 {
-// TODO: Implement OnScrollMixer
-	wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED, m_toggleBtn_keep_hue->GetId());    GetEventHandler()->ProcessEvent(evt); ToggleKeepingHueClick(evt);
+	if (m_toggleBtn_keep_hue->GetValue())
+	{
+		wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED, m_toggleBtn_keep_hue->GetId());    GetEventHandler()->ProcessEvent(evt); ToggleKeepingHueClick(evt);
+	}
 }
 
 void MainWorkingFrame::ToggleKeepingHueClick(wxCommandEvent& event)
 {
-	// TODO: Implement ToggleKeepingHueClick
+
+	if (m_toggleBtn_keep_hue->GetValue()) m_slider_mixing_level->Enable(); else m_slider_mixing_level->Disable();
 
 	// dodane, żeby na opracje były przeprowadzane na zdjęciu w skali szarości
 	Img_Cpy = Img_GrayScale.Copy();
