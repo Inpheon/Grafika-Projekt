@@ -443,6 +443,28 @@ void MainWorkingFrame::ColorChanged( wxColourPickerEvent& event )
 void MainWorkingFrame::BtnSaveImageClick( wxCommandEvent& event )
 {
 // TODO: Implement BtnSaveImageClick
+
+	// mozliwosc zapisu w dwoch formatach: JPG i PNG
+	wxFileDialog saveFileDialog(this, _("Save image to file"), "", "", "JPG files (*.jpg)|*.jpg|PNG files (*.png)|*.png", wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
+
+	// jezeli uzytkownik zdecyduje sie anulowac zapis
+	if (saveFileDialog.ShowModal() == wxID_CANCEL)
+		return;
+
+	// sciezka do pliku
+	wxFileOutputStream output_stream(saveFileDialog.GetPath());
+	
+	if (!output_stream.IsOk())
+	{
+		// error jesli sciezka nieprawidlowa
+		wxLogError("Cannot save current contents in file '%s'.", saveFileDialog.GetPath());
+		return;
+	}
+	else {
+		Img_Cpy.SetOption("quality", 100);	// najlepsza jakosc zapisu dla plikow JPG
+		Img_Cpy.SaveFile(saveFileDialog.GetPath()); // zapis do pliku jezeli wszystko w porzadku
+		wxMessageDialog(NULL, "Poprawnie zapisano obraz do pliku.", "Uwaga!", wxOK).ShowModal(); // komunikat o powodzeniu akcji
+	}
 }
 
 void MainWorkingFrame::Repaint() {
