@@ -420,11 +420,11 @@ void MainWorkingFrame::ToggleKeepingHueClick( wxCommandEvent& event )
 
 			p = p / 180.0;
 
-			p = p * val;
+			p = p * val*5;
 			
-			int r = (double)colors_org[i * 3] * (1.0 - p) + (double)gray_cpy[i * 3] * p;
-			int g = (double)colors_org[i * 3 + 1] * (1.0 - p) + (double)gray_cpy[i * 3 + 1] * p;
-			int b = (double)colors_org[i * 3 + 2] * (1.0 - p) + (double)gray_cpy[i * 3 + 2] * p;
+			int r = std::clamp((double)colors_org[i * 3] * (1.0 - p),0.,255.) + std::clamp((double)gray_cpy[i * 3] * p,0.0,255.0);
+			int g = std::clamp((double)colors_org[i * 3 + 1] * (1.0 - p),0.,255.) + std::clamp((double)gray_cpy[i * 3 +1] * p, 0.0, 255.0);
+			int b = std::clamp((double)colors_org[i * 3 + 2] * (1.0 - p),0.,255.) + std::clamp((double)gray_cpy[i * 3 +2] * p, 0.0, 255.0);
 
 			r = std::clamp(r, 0, 255);
 			g = std::clamp(g, 0, 255);
