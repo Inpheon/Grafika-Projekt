@@ -362,10 +362,14 @@ void MainWorkingFrame::ToggleKeepingHueClick( wxCommandEvent& event )
 {
 // TODO: Implement ToggleKeepingHueClick
 
+	// dodane, żeby na opracje były przeprowadzane na zdjęciu w skali szarości (bez tej linijki każde kolejne kliknięcie "pozostaw barwe" wzmacniało efekt)
+	Img_Cpy = Img_GrayScale.Copy();
+
 	/////////////////////////////////////////////
 	//		POTRZEBNE LICZNE USPRAWNIENIA	   //
 	/////////////////////////////////////////////
 
+	// parametr kotrolujący siłę zanikania barw
 	double val = (double)m_slider_mixing_level->GetValue() / 100.0;
 
 	// wartosc RGB zczytana z colorpickera
@@ -415,6 +419,8 @@ void MainWorkingFrame::ToggleKeepingHueClick( wxCommandEvent& event )
 				p = 360 - p;
 
 			p = p / 180.0;
+
+			p = p * val;
 			
 			int r = (double)colors_org[i * 3] * (1.0 - p) + (double)gray_cpy[i * 3] * p;
 			int g = (double)colors_org[i * 3 + 1] * (1.0 - p) + (double)gray_cpy[i * 3 + 1] * p;
