@@ -32,6 +32,8 @@ Po uruchomieniu aplikacji, wczytaj obraz za pomocą przycisku "Wczytaj obrazek".
 ## Demo
 <img src="Demo/demo_1.png" width="70%">
 <img src="Demo/demo_2.png" width="70%">
+<img src="Demo/demo_3.gif" width="70%">
+
 
 ## Współpraca
 Projekt został zrealizowany przez trzyosobowy zespół. Każdy z członków zespołu miał swoją rolę w tworzeniu algorytmów i modułów aplikacji.
