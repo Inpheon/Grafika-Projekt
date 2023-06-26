@@ -28,7 +28,13 @@ Projekt wymaga również biblioteki wxWidgets, która powinna być umieszczona w
 ## Użycie
 Po uruchomieniu aplikacji, wczytaj obraz za pomocą przycisku "Wczytaj obrazek". Następnie, używając suwaków i przycisków, dostosuj efekt końcowy do swoich preferencji. Przetworzony obraz możesz zapisać za pomocą przycisku "Zapisz obrazek". Aby zapisać aktualne ustawienia, użyj przycisku "Zapisz parametry".
 
+
+## Demo
+<img src="Demo/demo_1.png" width="70%">
+<img src="Demo/demo_2.png" width="70%">
+
 ## Współpraca
 Projekt został zrealizowany przez trzyosobowy zespół. Każdy z członków zespołu miał swoją rolę w tworzeniu algorytmów i modułów aplikacji.
+
 
 
