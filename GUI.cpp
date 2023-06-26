@@ -131,7 +131,7 @@ MainFrameBase::MainFrameBase( wxWindow* parent, wxWindowID id, const wxString& t
 
 	bSizer4->Add( m_toggleBtn_keep_hue, 0, wxALL, 5 );
 
-	m_colourPicker = new wxColourPickerCtrl( this, wxID_ANY, *wxBLACK, wxDefaultPosition, wxSize( 120,-1 ), wxCLRP_DEFAULT_STYLE );
+	m_colourPicker = new wxColourPickerCtrl( this, wxID_ANY, *wxRED, wxDefaultPosition, wxSize( 120,-1 ), wxCLRP_DEFAULT_STYLE );
 	m_colourPicker->Enable( false );
 
 	bSizer4->Add( m_colourPicker, 0, wxALL, 5 );

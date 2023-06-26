@@ -8,42 +8,6 @@ MainFrameBase( parent )
 
 }
 
-cimg_library::CImg<unsigned char> MainWorkingFrame::wxImageToCImg(const wxImage& image)
-{
-	cimg_library::CImg<unsigned char> img(image.GetWidth(), image.GetHeight(), 1, 3);
-
-	for (size_t x = 0; x < image.GetWidth(); x++) {
-		for (size_t y = 0; y < image.GetHeight(); y++) {
-			img(x, y, 0, 0) = image.GetRed(x, y);
-			img(x, y, 0, 1) = image.GetGreen(x, y);
-			img(x, y, 0, 2) = image.GetBlue(x, y);
-		}
-	}
-
-	return img;
-}
-
-wxImage MainWorkingFrame::CImgTowxImage(const cimg_library::CImg<unsigned char>& image)
-{
-	// Create a new wxImage with the same dimensions as the CImg image
-	wxImage img(image.width(), image.height());
-
-	// Get pointers to the image data
-	unsigned char* imgData = img.GetData();
-
-	// Copy the pixel data from the CImg image to the wxImage
-	size_t index = 0;
-	for (size_t y = 0; y < image.height(); ++y) {
-		for (size_t x = 0; x < image.width(); ++x) {
-			imgData[index++] = image(x, y, 0, 0); // Red
-			imgData[index++] = image(x, y, 0, 1); // Green
-			imgData[index++] = image(x, y, 0, 2); // Blue
-		}
-	}
-
-	return img;
-}
-
 void MainWorkingFrame::FrameOnPaint( wxPaintEvent& event )
 {
 // TODO: Implement FrameOnPaint
