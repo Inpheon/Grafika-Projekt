@@ -24,6 +24,7 @@ Aby zainstalować projekt lokalnie, sklonuj to repozytorium i otwórz w środowi
 ```
 git clone [link do repozytorium]
 ```
+Projekt wymaga również biblioteki wxWidgets, która powinna być umieszczona w folderze `wxWidgets` w głównym katalogu.
 ## Użycie
 Po uruchomieniu aplikacji, wczytaj obraz za pomocą przycisku "Wczytaj obrazek". Następnie, używając suwaków i przycisków, dostosuj efekt końcowy do swoich preferencji. Przetworzony obraz możesz zapisać za pomocą przycisku "Zapisz obrazek". Aby zapisać aktualne ustawienia, użyj przycisku "Zapisz parametry".
 
