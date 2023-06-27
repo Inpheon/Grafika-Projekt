@@ -25,7 +25,6 @@
     <ClCompile Include="pugixml.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CImg.h" />
     <ClInclude Include="GUI.h" />
     <ClInclude Include="MainWorkingFrame.h" />
     <ClInclude Include="pugiconfig.hpp" />

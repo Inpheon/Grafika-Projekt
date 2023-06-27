@@ -51,6 +51,9 @@ void MainWorkingFrame::BtnImportImageClick( wxCommandEvent& event )
 			m_colourPickerDark->Enable(true);
 			m_colourPickerLight->Enable(true);
 			m_colourPicker->Enable(true);
+			m_slider_mixing_level->SetValue(0);
+			m_slider_mixing_level->Enable(false);
+			m_toggleBtn_keep_hue->SetValue(false);
 
 			setDefaultMixer();
 			Repaint();
